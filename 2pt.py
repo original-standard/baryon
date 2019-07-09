@@ -51,17 +51,9 @@ def memory_leak(i):
 
      del t
 
-     t = read.read_2pt_rest(sorted(glob.glob(org2)),len(glob.glob(org2)),20)
-     for k in t.jack:
-         if(k[0].oper == oper):
-             if(k[0].mom == momorg):
-                 if(k[0].sink == sinkorg):
-                     nuc_2pt_2 = [np.array((l.set_zero()).correlator_complex) for l in k]
-
-     del t
 
 
-     nuc_2pt = [(nuc_2pt[i] + nuc_2pt_2[i]) /2. for i in range(len(nuc_2pt))]
+#     nuc_2pt = [(nuc_2pt[i] + nuc_2pt_2[i]) /2. for i in range(len(nuc_2pt))]
 
      nuc_2pt = utils.jackknife([nuc_2pt[i] + ama[i] for i in range(len(nuc_2pt))])
      for i in range(len(nuc_2pt)):

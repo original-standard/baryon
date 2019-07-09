@@ -2,6 +2,7 @@ import re
 import copy
 import sys
 import math
+import numpy as np
 
 class baryon_3pt(object):
         def __init__(self):
@@ -9,6 +10,7 @@ class baryon_3pt(object):
                 self.quark = "default"
                 self.source = []
                 self.sink = []
+                self.pos = [0,0,0]
                 self.sinkmom = []
                 self.opmom = []
                 self.fact = "default"
@@ -38,7 +40,12 @@ class baryon_3pt(object):
                 shift = - int(self.source[-1]) + int(obj.source[-1])
                 if(shift < 0):
                         shift = shift + len(result.correlator_complex_d)
-
+                fourier = self.pos
+                for i in range(len(fourier)):
+                    fourier[i] = float(fourier[i]) - float(obj.pos[i])
+                    fourier[i] = -fourier[i]* float(self.opmom[i]) / len(result.correlator_complex_d)
+                    
+                comp = np.exp(complex(0,2. * 3.14 * sum(fourier)))
 
 
                 cor_complex_d = []
@@ -50,14 +57,14 @@ class baryon_3pt(object):
                 for i in obj.correlator_complex_d[0:shift]:
                         cor_complex_d.append(i)
                 for i in range(len(result.correlator_complex_d)):
-                        result.correlator_complex_d[i] = result.correlator_complex_d[i] + cor_complex_d[i]
+                        result.correlator_complex_d[i] = result.correlator_complex_d[i] + cor_complex_d[i] *comp
 
                 for i in obj.correlator_complex_u[shift:]:
                         cor_complex_u.append(i)
                 for i in obj.correlator_complex_u[0:shift]:
                         cor_complex_u.append(i)
                 for i in range(len(result.correlator_complex_u)):
-                        result.correlator_complex_u[i] = result.correlator_complex_u[i] + cor_complex_u[i]
+                        result.correlator_complex_u[i] = result.correlator_complex_u[i] + cor_complex_u[i] *comp
 
 
                 return result
@@ -104,6 +111,12 @@ class baryon_3pt(object):
                 shift = shift + len(self.correlator_complex_d)
                 self.source[-1] = "0"
 
+                fourier = self.pos
+                for i in range(len(fourier)):
+                    fourier[i] =  float(fourier[i]) * float(self.opmom[i]) / len(self.correlator_complex_d)
+                    
+                comp = np.exp(complex(0,2. * 3.14 * sum(fourier)))
+                
                 cor_complex_d = []
                 cor_complex_u = []
 
@@ -113,7 +126,7 @@ class baryon_3pt(object):
                 for i in self.correlator_complex_d[0:shift]:
                         cor_complex_d.append(i)
                 for i in range(len(self.correlator_complex_d)):
-                        self.correlator_complex_d[i] = cor_complex_d[i]
+                        self.correlator_complex_d[i] = cor_complex_d[i] *comp
 
                 
                 for i in self.correlator_complex_u[shift:]:
@@ -121,10 +134,10 @@ class baryon_3pt(object):
                 for i in self.correlator_complex_u[0:shift]:
                         cor_complex_u.append(i)
                 for i in range(len(self.correlator_complex_u)):
-                        self.correlator_complex_u[i] = cor_complex_u[i]
+                        self.correlator_complex_u[i] = cor_complex_u[i] *comp
                 return self
 
-def read_baryon_3pt(file,N,conf):
+def read_baryon_3pt(file,N,conf,S):
         num = 0
         temp = baryon_3pt()
         temp2 = baryon_3pt()
@@ -135,6 +148,7 @@ def read_baryon_3pt(file,N,conf):
                         isovector.correlator_complex_u = temp.correlator_complex_u
                         isovector.correlator_complex_d = temp2.correlator_complex_d
                         isovector.conf = conf
+                        isovector.pos = S
                         return isovector
                 if(1 == 1):
                         words = re.split(" +",line)

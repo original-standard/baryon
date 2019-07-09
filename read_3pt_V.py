@@ -17,12 +17,18 @@ class read_3pt_rest:
 #            print(i)
             baryons = []
             baryons_ama = []
+            tmp = i
+            src = []
+            for j in ['x','y','z','t']:
+                src.append(tmp.split(j)[0])
+                tmp = tmp.split(j)[1]
+            src = src[1:]
             with open(i,"r") as file:
                 num = 0
                 for line in file:
                     line = line.rstrip()
                     if(re.split(" +",line)[0] == 'START_NUC3PT'):
-                        a = copy.deepcopy(baryon_3pt.read_baryon_3pt(file,num,i.split("/")[2]))
+                        a = copy.deepcopy(baryon_3pt.read_baryon_3pt(file,num,i.split("/")[2],src))
                         if(a.proj == proj):
                             baryons.append(a)
             with open(i.replace("dat","dat_ama"),"r") as file:
@@ -30,7 +36,7 @@ class read_3pt_rest:
                 for line in file:
                     line = line.rstrip()
                     if(re.split(" +",line)[0] == 'START_NUC3PT'):
-                        a = copy.deepcopy(baryon_3pt.read_baryon_3pt(file,num,i.split("/")[2]))
+                        a = copy.deepcopy(baryon_3pt.read_baryon_3pt(file,num,i.split("/")[2],src))
                         if(a.proj == proj):
                             baryons_ama.append(a)
             conf.append(baryons)
@@ -48,12 +54,18 @@ class read_3pt_ama:
         fold = []
         for i in argvs:
             baryons = []
+            tmp = i
+            src = []
+            for j in ['x','y','z','t']:
+                src.append(tmp.split(j)[0])
+                tmp = tmp.split(j)[1]
+            src = src[1:]
             with open(i,"r") as file:
                 num = 0
                 for line in file:
                     line = line.rstrip()
                     if(re.split(" +",line)[0] == 'START_NUC3PT'):
-                        a = copy.deepcopy(baryon_3pt.read_baryon_3pt(file,num,i.split("/")[2]))
+                        a = copy.deepcopy(baryon_3pt.read_baryon_3pt(file,num,i.split("/")[2],src))
                         if(a.proj == proj):
                             baryons.append(a)
 

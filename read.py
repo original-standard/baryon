@@ -17,19 +17,26 @@ class read_2pt_rest:
             ms = 0.
             baryons = []
             baryons_ama = []
+            tmp = i
+            src = []
+            for j in ['x','y','z','t']:
+                src.append(tmp.split(j)[0])
+                tmp = tmp.split(j)[1]
+            src = src[1:]
+#            print(i,src)
             with open(i,"r") as file:
                 num = 0
                 for line in file:
                     line = line.rstrip()
                     if(re.split(" +",line)[0] == 'STARTPROP'):
-                        baryons.append(baryon.read_baryon_prop(file,num,ml,ms))
+                        baryons.append(baryon.read_baryon_prop(file,num,ml,ms,src))
 
             with open(i.replace("dat","dat_ama"),"r") as file:
                 num = 0
                 for line in file:
                     line = line.rstrip()
                     if(re.split(" +",line)[0] == 'STARTPROP'):
-                        baryons_ama.append(baryon.read_baryon_prop(file,num,ml,ms))
+                        baryons_ama.append(baryon.read_baryon_prop(file,num,ml,ms,src))
             conf.append(baryons)
             conf_ama.append(baryons_ama)
 
@@ -49,6 +56,13 @@ class read_2pt_ama:
         for i in argvs:
             ml = 0.
             ms = 0.
+            tmp = i
+            src = []
+            for j in ['x','y','z','t']:
+                src.append(tmp.split(j)[0])
+                tmp = tmp.split(j)[1]
+            src = src[1:]
+#            print(i,src)
             baryons = []
             baryons_ama = []
             with open(i,"r") as file:
@@ -56,7 +70,7 @@ class read_2pt_ama:
                 for line in file:
                     line = line.rstrip()
                     if(re.split(" +",line)[0] == 'STARTPROP'):
-                        baryons.append(baryon.read_baryon_prop(file,num,ml,ms))
+                        baryons.append(baryon.read_baryon_prop(file,num,ml,ms,src))
 
             conf.append(baryons)
 

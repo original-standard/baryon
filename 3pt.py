@@ -12,7 +12,7 @@ argvs = sys.argv
 org = "../srcX*/*/nuc3pt.dat.*x0y0z0t0"
 org2 = "../srcX*/*/nuc3pt.dat.*x64y64z64t64"
 ama = "../srcX*/*/nuc3pt.dat*ama*.x[0-9]*"
-sink = 14
+sink = 10
 #n2pt = read.read_2pt(sorted(glob.glob(dir2pt)),len(glob.glob(dir2pt)),20)
 #n3pt = read_3pt_V.read_3pt(sorted(glob.glob(dir2pt)),len(glob.glob(dir2pt)),"PPAR",20)
 #n3ptZ = read_3pt_V.read_3pt(sorted(glob.glob(dir2pt)),len(glob.glob(dir2pt)),"PPAR_5Z",20)
@@ -37,13 +37,13 @@ def nuc3pt_PPAR5Z(i):
 
 
 n3pt_rest = read_3pt_V.read_3pt_rest(sorted(glob.glob(org)),len(glob.glob(org)),"PPAR_5Z",20).jack
-n3pt_rest_2 = read_3pt_V.read_3pt_rest(sorted(glob.glob(org2)),len(glob.glob(org2)),"PPAR_5Z",20).jack
+#n3pt_rest_2 = read_3pt_V.read_3pt_rest(sorted(glob.glob(org2)),len(glob.glob(org2)),"PPAR_5Z",20).jack
 #n3pt_rest_3 = read_3pt_V.read_3pt_rest(sorted(glob.glob(org3)),len(glob.glob(org3)),"PPAR_5Z",20).jack
 #n3pt_rest_4 = read_3pt_V.read_3pt_rest(sorted(glob.glob(org4)),len(glob.glob(org4)),"PPAR_5Z",20).jack
 
 #n3pt_rest_2
 #n3pt_rest = [[(n3pt_rest[i][j] + n3pt_rest_2[i][j] + n3pt_rest_3[i][j] + n3pt_rest_4[i][j]) / 4. for j in range(len(n3pt_rest[0]))] for i in range(len(n3pt_rest))]
-n3pt_rest = [[(n3pt_rest[i][j] + (n3pt_rest_2[i][j].set_zero())) / 2. for j in range(len(n3pt_rest[0]))] for i in range(len(n3pt_rest))]
+#n3pt_rest = [[(n3pt_rest[i][j] + (n3pt_rest_2[i][j].set_zero())) / 2. for j in range(len(n3pt_rest[0]))] for i in range(len(n3pt_rest))]
 
 with Pool(5) as p:
      n3pt_ama = p.map(nuc3pt_PPAR5Z,sorted(glob.glob(org)))

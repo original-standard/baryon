@@ -2,6 +2,7 @@ import re
 import copy
 import sys
 import math
+import numpy as np
 
 class baryon_prop(object):
         def __init__(self):
@@ -9,12 +10,13 @@ class baryon_prop(object):
                 self.source = []
                 self.sink = []
                 self.sinks = "default"
-                self.mom = []
+                self.mom = [0,0,0]
                 self.oper = "default"
                 self.state = "default"
                 self.correlator = []
                 self.correlator_img = []
                 self.correlator_complex = []
+                self.pos = []
         def __add__(self,obj):
                 if(self.masses != obj.masses):
                         sys.stderr.write("ALERT!! (MASS)\n")
@@ -34,6 +36,12 @@ class baryon_prop(object):
                         shift = shift + len(result.correlator)
 
 
+                fourier = self.pos
+                for i in range(len(fourier)):
+                    fourier[i] = float(fourier[i]) - float(obj.pos[i])
+                    fourier[i] = -fourier[i]* float(self.mom[i]) / len(result.correlator)
+                    
+                comp = np.exp(complex(0,2. * 3.14 * sum(fourier)))
                 cor = []
                 cor_img = []
                 cor_complex = []
@@ -53,7 +61,7 @@ class baryon_prop(object):
                 for i in obj.correlator_complex[0:shift]:
                         cor_complex.append(i)
                 for i in range(len(result.correlator_complex)):
-                        result.correlator_complex[i] = result.correlator_complex[i] + cor_complex[i]
+                        result.correlator_complex[i] = result.correlator_complex[i] + cor_complex[i] * comp
 
                 for i in range(len(result.correlator)):
                         result.correlator[i] = result.correlator[i] + cor[i]
@@ -124,6 +132,11 @@ class baryon_prop(object):
                         self.correlator[i] = math.sqrt(self.correlator[i] * self.correlator[i] + self.correlator_img[i] * self.correlator_img[i])
                 
         def set_zero(self):
+                fourier = self.pos
+                for i in range(len(fourier)):
+                    fourier[i] =  float(fourier[i]) * float(self.mom[i]) / len(self.correlator)
+                    
+                comp = np.exp(complex(0,2. * 3.14 * sum(fourier)))
                 shift = - int(self.source[-1])
                 shift = shift + len(self.correlator_complex)
                 self.source[-1] = "0"
@@ -136,8 +149,7 @@ class baryon_prop(object):
                 for i in self.correlator_complex[0:shift]:
                         cor_complex.append(i)
                 for i in range(len(self.correlator_complex)):
-                        self.correlator_complex[i] = cor_complex[i]
-
+                        self.correlator_complex[i] = cor_complex[i] * comp
                 
                 return self
 
@@ -147,7 +159,7 @@ def sym(obj):
         baryon_propobj.timereversal()
         return (obj + baryon_propobj) /2.
 
-def read_baryon_prop(file,N,l,s):
+def read_baryon_prop(file,N,l,s,S):
         num = 0
         temp = baryon_prop()
         temp2 = baryon_prop()
@@ -156,6 +168,7 @@ def read_baryon_prop(file,N,l,s):
         for line in file:
                 line = line.rstrip()
                 if(line == "ENDPROP"):
+                        temp.pos = S
                         return temp
                         #temp2.timereversal()
                         #return (temp + temp2) / 2.
